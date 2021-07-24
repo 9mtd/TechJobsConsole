@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -29,7 +30,7 @@ namespace TechJobsConsole
             foreach (Dictionary<string, string> job in AllJobs)
             {
                 string aValue = job[column];
-
+                var valueToLower = aValue.ToLowerInvariant();
                 if (!values.Contains(aValue))
                 {
                     values.Add(aValue);
@@ -37,6 +38,8 @@ namespace TechJobsConsole
             }
             return values;
         }
+
+
 
         public static List<Dictionary<string, string>> FindByColumnAndValue(string column, string value)
         {
@@ -49,7 +52,7 @@ namespace TechJobsConsole
             {
                 string aValue = row[column];
 
-                if (aValue.Contains(value))
+                if (aValue.Contains(value, StringComparison.InvariantCultureIgnoreCase))
                 {
                     jobs.Add(row);
                 }
@@ -58,8 +61,35 @@ namespace TechJobsConsole
             return jobs;
         }
 
+
+
+        // PART 2. Create Method FindByValue
+        public static List<Dictionary<string, string>> FindByValue(string searchTerm)
+        {
+            LoadData();
+
+            List<Dictionary<string, string>> jobs = new List<Dictionary<string, string>>();
+            // search across all columns for a given search term, use Contains
+            foreach (Dictionary<string, string> row in AllJobs)
+            {
+                foreach(var column in row)
+                {
+                    if (column.Value.Contains(searchTerm, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        jobs.Add(row);
+                        break;
+                    }
+                }
+            }
+            return jobs;
+
+        }
+
+
+
+
         /*
-         * Load and parse data from job_data.csv
+         * Load and parse data from job_data.csv. DON't TOCH THIS CODE!!!!
          */
         private static void LoadData()
         {
